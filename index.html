@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Duncan — Administration SI Cloud & Automatisation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#10161D;
+    --bg-alt:#161E27;
+    --bg-raised:#1B242F;
+    --border:#232D38;
+    --text:#E7EDF2;
+    --text-muted:#8A97A3;
+    --text-faint:#5C6873;
+    --accent-amber:#E3A94A;
+    --accent-amber-dim:#8A6A34;
+    --accent-teal:#3FA8A0;
+    --radius:10px;
+    --max:1100px;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important; scroll-behavior:auto !important;}
+  }
+
+  h1,h2,h3{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+
+  .mono{
+    font-family:'IBM Plex Mono', monospace;
+  }
+
+  a{color:inherit; text-decoration:none;}
+
+  .wrap{
+    max-width:var(--max);
+    margin:0 auto;
+    padding:0 24px;
+  }
+
+  /* NAV */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(16,22,29,0.85);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 24px;
+    max-width:var(--max);
+    margin:0 auto;
+  }
+  .logo{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:1.15rem;
+    display:flex; align-items:center; gap:10px;
+  }
+  .logo-dot{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--accent-teal);
+    box-shadow:0 0 8px var(--accent-teal);
+  }
+  .nav-links{display:flex; gap:32px; font-size:0.92rem; color:var(--text-muted);}
+  .nav-links a:hover{color:var(--text);}
+  .nav-cta{
+    font-size:0.85rem;
+    padding:9px 18px;
+    border:1px solid var(--accent-amber-dim);
+    border-radius:6px;
+    color:var(--accent-amber);
+    transition:all .2s;
+  }
+  .nav-cta:hover{background:var(--accent-amber); color:#10161D; border-color:var(--accent-amber);}
+  .nav-mobile-hide{display:flex;}
+  @media (max-width:720px){
+    .nav-mobile-hide{display:none;}
+  }
+
+  /* HERO */
+  .hero{
+    padding:100px 24px 80px;
+    border-bottom:1px solid var(--border);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:'';
+    position:absolute;
+    top:-200px; right:-200px;
+    width:500px; height:500px;
+    background:radial-gradient(circle, rgba(63,168,160,0.08) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .hero-inner{
+    max-width:var(--max);
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:60px;
+    align-items:start;
+    position:relative;
+  }
+  @media (max-width:900px){
+    .hero-inner{grid-template-columns:1fr; gap:48px;}
+  }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    color:var(--accent-teal);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    margin-bottom:20px;
+    display:flex; align-items:center; gap:8px;
+    opacity:0;
+    animation:fadeUp .6s ease forwards;
+  }
+  .eyebrow::before{
+    content:'';
+    width:6px; height:6px;
+    background:var(--accent-teal);
+    border-radius:50%;
+  }
+
+  h1{
+    font-size:clamp(2.1rem, 4.5vw, 3.2rem);
+    line-height:1.12;
+    margin-bottom:22px;
+    opacity:0;
+    animation:fadeUp .6s ease .1s forwards;
+  }
+  h1 em{
+    font-style:normal;
+    color:var(--accent-amber);
+  }
+
+  .hero-sub{
+    font-size:1.05rem;
+    color:var(--text-muted);
+    max-width:520px;
+    margin-bottom:32px;
+    opacity:0;
+    animation:fadeUp .6s ease .2s forwards;
+  }
+
+  .hero-actions{
+    display:flex; gap:14px; flex-wrap:wrap;
+    opacity:0;
+    animation:fadeUp .6s ease .3s forwards;
+  }
+  .btn-primary{
+    background:var(--accent-amber);
+    color:#10161D;
+    padding:13px 24px;
+    border-radius:6px;
+    font-weight:600;
+    font-size:0.95rem;
+    transition:transform .15s, box-shadow .15s;
+    display:inline-block;
+  }
+  .btn-primary:hover{transform:translateY(-1px); box-shadow:0 4px 16px rgba(227,169,74,0.25);}
+  .btn-ghost{
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:13px 24px;
+    border-radius:6px;
+    font-size:0.95rem;
+    transition:border-color .15s;
+  }
+  .btn-ghost:hover{border-color:var(--text-muted);}
+
+  @keyframes fadeUp{
+    from{opacity:0; transform:translateY(10px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  /* STATUS PANEL — signature element */
+  .status-panel{
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+    opacity:0;
+    animation:fadeUp .6s ease .35s forwards;
+  }
+  .status-panel-head{
+    padding:14px 18px;
+    border-bottom:1px solid var(--border);
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:var(--text-faint);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+  }
+  .status-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 18px;
+    border-bottom:1px solid var(--border);
+  }
+  .status-row:last-child{border-bottom:none;}
+  .status-left{display:flex; align-items:center; gap:12px;}
+  .status-name{font-size:0.9rem; font-weight:500;}
+  .status-desc{font-size:0.78rem; color:var(--text-faint); margin-top:2px;}
+  .status-dot{
+    width:9px; height:9px; border-radius:50%;
+    background:var(--accent-teal);
+    box-shadow:0 0 6px rgba(63,168,160,0.6);
+    flex-shrink:0;
+  }
+  .status-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:var(--accent-teal);
+    white-space:nowrap;
+  }
+  .status-panel-foot{
+    padding:12px 18px;
+    font-size:0.72rem;
+    color:var(--text-faint);
+    font-family:'IBM Plex Mono', monospace;
+    background:rgba(0,0,0,0.15);
+  }
+
+  /* SECTIONS */
+  section{padding:80px 24px;}
+  .section-head{margin-bottom:48px; max-width:640px;}
+  .section-eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.75rem;
+    color:var(--accent-amber);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    margin-bottom:14px;
+  }
+  .section-head h2{font-size:clamp(1.5rem, 3vw, 2.1rem); margin-bottom:14px;}
+  .section-head p{color:var(--text-muted); font-size:1rem;}
+
+  /* POUR QUI */
+  .pourqui{
+    background:var(--bg-alt);
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+  }
+  .pourqui-inner{max-width:var(--max); margin:0 auto;}
+  .pourqui-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:32px;
+  }
+  @media (max-width:800px){.pourqui-grid{grid-template-columns:1fr;}}
+  .pourqui-card{
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:28px;
+  }
+  .pourqui-card h3{
+    font-size:1rem;
+    margin-bottom:16px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .pourqui-card ul{list-style:none;}
+  .pourqui-card li{
+    font-size:0.92rem;
+    color:var(--text-muted);
+    padding:8px 0;
+    padding-left:20px;
+    position:relative;
+  }
+  .pourqui-card.oui li::before{
+    content:'✓';
+    position:absolute; left:0; color:var(--accent-teal);
+  }
+  .pourqui-card.non li::before{
+    content:'—';
+    position:absolute; left:0; color:var(--text-faint);
+  }
+
+  /* SERVICES */
+  .services-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:24px;
+  }
+  @media (max-width:900px){.services-grid{grid-template-columns:1fr;}}
+  .service-card{
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:28px;
+    transition:border-color .2s, transform .2s;
+  }
+  .service-card:hover{border-color:var(--accent-amber-dim); transform:translateY(-3px);}
+  .service-num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.75rem;
+    color:var(--accent-teal);
+    margin-bottom:16px;
+  }
+  .service-card h3{font-size:1.15rem; margin-bottom:12px;}
+  .service-card > p{color:var(--text-muted); font-size:0.9rem; margin-bottom:18px;}
+  .service-card ul{list-style:none;}
+  .service-card li{
+    font-size:0.86rem;
+    color:var(--text-faint);
+    padding:6px 0;
+    padding-left:16px;
+    position:relative;
+    border-top:1px solid var(--border);
+  }
+  .service-card li:first-child{border-top:none;}
+  .service-card li::before{
+    content:'·';
+    position:absolute; left:0; color:var(--accent-amber);
+  }
+
+  /* EXPERIENCE */
+  .exp{
+    background:var(--bg-alt);
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+  }
+  .exp-inner{
+    max-width:var(--max); margin:0 auto;
+    display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;
+  }
+  @media (max-width:800px){.exp-inner{grid-template-columns:1fr;}}
+  .exp-text p{color:var(--text-muted); margin-bottom:16px; font-size:0.98rem;}
+  .exp-text p:last-child{margin-bottom:0;}
+  .tags{display:flex; flex-wrap:wrap; gap:8px; margin-top:24px;}
+  .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.75rem;
+    padding:6px 12px;
+    border:1px solid var(--border);
+    border-radius:4px;
+    color:var(--text-muted);
+    background:var(--bg);
+  }
+
+  /* PROCESS */
+  .process-list{display:flex; flex-direction:column;}
+  .process-item{
+    display:grid;
+    grid-template-columns:60px 1fr;
+    gap:24px;
+    padding:28px 0;
+    border-top:1px solid var(--border);
+  }
+  .process-item:last-child{border-bottom:1px solid var(--border);}
+  .process-num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.85rem;
+    color:var(--accent-amber);
+  }
+  .process-item h3{font-size:1.05rem; margin-bottom:8px;}
+  .process-item p{color:var(--text-muted); font-size:0.92rem; max-width:520px;}
+
+  /* CONTACT */
+  .contact{
+    background:var(--bg-alt);
+    border-top:1px solid var(--border);
+  }
+  .contact-inner{
+    max-width:640px; margin:0 auto; text-align:center;
+  }
+  .contact h2{font-size:clamp(1.6rem, 3.5vw, 2.2rem); margin-bottom:16px;}
+  .contact p{color:var(--text-muted); margin-bottom:32px; font-size:1rem;}
+  .contact-methods{
+    display:flex; gap:16px; justify-content:center; flex-wrap:wrap;
+  }
+  .contact-card{
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:16px 24px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.9rem;
+    transition:border-color .2s;
+  }
+  .contact-card:hover{border-color:var(--accent-amber);}
+
+  footer{
+    padding:32px 24px;
+    text-align:center;
+    color:var(--text-faint);
+    font-size:0.82rem;
+    border-top:1px solid var(--border);
+  }
+
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.visible{opacity:1; transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo"><span class="logo-dot"></span>DUNCAN</div>
+    <div class="nav-links nav-mobile-hide">
+      <a href="#services">Services</a>
+      <a href="#pourqui">Pour qui</a>
+      <a href="#experience">Expérience</a>
+      <a href="#process">Méthode</a>
+    </div>
+    <a href="#contact" class="nav-cta">Échanger 30 min</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="eyebrow">Administration SI Cloud & Automatisation</div>
+      <h1>Votre système d'information géré à distance, <em>sans jamais poser de valise.</em></h1>
+      <p class="hero-sub">J'administre votre environnement Microsoft 365 et j'automatise vos tâches répétitives, entièrement à distance — sans visite sur site, sans forfait d'heures surprise, avec un point de contact clair.</p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn-primary">Prendre 30 minutes</a>
+        <a href="#services" class="btn-ghost">Voir les prestations</a>
+      </div>
+    </div>
+
+    <div class="status-panel">
+      <div class="status-panel-head">
+        <span>Aperçu du suivi proposé</span>
+        <span>Exemple</span>
+      </div>
+      <div class="status-row">
+        <div class="status-left">
+          <span class="status-dot"></span>
+          <div>
+            <div class="status-name">Comptes & accès (Entra ID)</div>
+            <div class="status-desc">Droits, sécurité, cycle de vie des comptes</div>
+          </div>
+        </div>
+        <span class="status-tag">Sous surveillance</span>
+      </div>
+      <div class="status-row">
+        <div class="status-left">
+          <span class="status-dot"></span>
+          <div>
+            <div class="status-name">Sauvegardes cloud</div>
+            <div class="status-desc">Vérification régulière, alertes en cas d'échec</div>
+          </div>
+        </div>
+        <span class="status-tag">Vérifiées</span>
+      </div>
+      <div class="status-row">
+        <div class="status-left">
+          <span class="status-dot"></span>
+          <div>
+            <div class="status-name">Tâches automatisées</div>
+            <div class="status-desc">Relances, reporting, documents</div>
+          </div>
+        </div>
+        <span class="status-tag">Actives</span>
+      </div>
+      <div class="status-panel-foot">Ce que je surveille et pilote pour vous, au quotidien.</div>
+    </div>
+  </div>
+</section>
+
+<section class="pourqui" id="pourqui">
+  <div class="pourqui-inner">
+    <div class="section-head">
+      <div class="section-eyebrow">Pour qui</div>
+      <h2>Un positionnement volontairement précis</h2>
+      <p>Ce service n'est pas pour tout le monde, et c'est voulu — mieux vaut le dire avant que pendant.</p>
+    </div>
+    <div class="pourqui-grid">
+      <div class="pourqui-card oui">
+        <h3>✓ Ça vous correspond si</h3>
+        <ul>
+          <li>Vous êtes déjà sur Microsoft 365, ou en cours de migration</li>
+          <li>Vous n'avez pas (ou plus) de parc serveur physique lourd à gérer</li>
+          <li>Vous voulez un interlocuteur unique, joignable, sans jargon</li>
+          <li>Vous préférez un suivi à distance à une présence permanente sur site</li>
+          <li>Vous avez des tâches répétitives que personne n'a le temps d'automatiser</li>
+        </ul>
+      </div>
+      <div class="pourqui-card non">
+        <h3>— Ce n'est pas pour vous si</h3>
+        <ul>
+          <li>Vous cherchez une intervention physique sur du matériel réseau</li>
+          <li>Vous avez besoin d'une présence permanente sur site</li>
+          <li>Vous cherchez une agence avec plusieurs techniciens dédiés</li>
+          <li>Votre priorité est un déploiement de postes ou de câblage</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">Prestations</div>
+      <h2>Trois façons de travailler ensemble</h2>
+      <p>Chaque prestation peut être prise seule ou combinée, selon où vous en êtes.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-num mono">01</div>
+        <h3>Administration Microsoft 365 & Identités</h3>
+        <p>Le socle : un environnement cloud sain, sécurisé et suivi dans la durée.</p>
+        <ul>
+          <li>Gestion des comptes, droits et accès (Entra ID)</li>
+          <li>Sécurisation des boîtes mail et des données partagées</li>
+          <li>Suivi des sauvegardes cloud</li>
+          <li>Support utilisateurs à distance</li>
+        </ul>
+      </div>
+      <div class="service-card">
+        <div class="service-num mono">02</div>
+        <h3>Automatisation des tâches répétitives</h3>
+        <p>Ce que votre équipe fait à la main chaque semaine, mais ne devrait plus faire.</p>
+        <ul>
+          <li>Relances, reporting, génération de documents</li>
+          <li>Connexion de vos outils entre eux (n8n / Make)</li>
+          <li>Priorité au retour sur temps gagné, pas à la technologie</li>
+        </ul>
+      </div>
+      <div class="service-card">
+        <div class="service-num mono">03</div>
+        <h3>Audit & accompagnement</h3>
+        <p>Un état des lieux clair avant d'engager quoi que ce soit sur la durée.</p>
+        <ul>
+          <li>État des lieux de votre environnement cloud</li>
+          <li>Recommandations priorisées et chiffrées</li>
+          <li>Accompagnement migration ou mise en conformité</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="exp" id="experience">
+  <div class="exp-inner">
+    <div class="exp-text">
+      <div class="section-eyebrow">Expérience</div>
+      <h2 style="font-size:1.7rem; margin-bottom:20px;">Avant le cloud, plusieurs années sur le terrain</h2>
+      <p>Plusieurs années en administration systèmes et réseaux — serveurs, virtualisation, sécurité, support N2/N3 — avant de recentrer mon activité sur le cloud et l'automatisation.</p>
+      <p>Cette expérience de terrain reste la base : elle veut dire que je comprends un système d'information dans son ensemble, pas seulement la partie visible depuis un tableau de bord.</p>
+      <div class="tags">
+        <span class="tag mono">Microsoft 365</span>
+        <span class="tag mono">Entra ID</span>
+        <span class="tag mono">Azure AD</span>
+        <span class="tag mono">n8n</span>
+        <span class="tag mono">Make</span>
+        <span class="tag mono">Windows Server</span>
+        <span class="tag mono">Linux</span>
+        <span class="tag mono">VMware / ESXi</span>
+        <span class="tag mono">Supervision & monitoring</span>
+      </div>
+    </div>
+    <div class="status-panel">
+      <div class="status-panel-head"><span>Parcours</span><span class="mono">2021 → auj.</span></div>
+      <div class="status-row">
+        <div class="status-left">
+          <div>
+            <div class="status-name">Administrateur Systèmes & Réseaux</div>
+            <div class="status-desc">Biogroup SCM — 2024 à aujourd'hui</div>
+          </div>
+        </div>
+      </div>
+      <div class="status-row">
+        <div class="status-left">
+          <div>
+            <div class="status-name">Responsable Technique</div>
+            <div class="status-desc">Lan&Wan — 2022 à 2023</div>
+          </div>
+        </div>
+      </div>
+      <div class="status-row">
+        <div class="status-left">
+          <div>
+            <div class="status-name">Technicien de maintenance</div>
+            <div class="status-desc">Lan&Wan — 2021 à 2022</div>
+          </div>
+        </div>
+      </div>
+      <div class="status-panel-foot">BAC+3 Administration Systèmes & Réseaux — Université Côte d'Azur</div>
+    </div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">Méthode</div>
+      <h2>Comment ça démarre</h2>
+      <p>Trois étapes, sans engagement avant la troisième.</p>
+    </div>
+    <div class="process-list">
+      <div class="process-item">
+        <div class="process-num mono">01</div>
+        <div>
+          <h3>Échange initial</h3>
+          <p>Un appel de 30 minutes en visio pour comprendre votre contexte, votre environnement actuel et ce qui vous pèse vraiment.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num mono">02</div>
+        <div>
+          <h3>État des lieux</h3>
+          <p>Un audit court de votre environnement Microsoft 365 / cloud, avec des recommandations concrètes et priorisées — pas un rapport de 40 pages.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num mono">03</div>
+        <div>
+          <h3>Mise en œuvre</h3>
+          <p>Administration continue, projet d'automatisation ponctuel, ou les deux — avec des points réguliers, pas un silence radio entre deux factures.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="contact-inner">
+    <div class="section-eyebrow" style="text-align:center;">Contact</div>
+    <h2>Un premier échange, sans engagement</h2>
+    <p>30 minutes suffisent pour savoir si ça a du sens de travailler ensemble.</p>
+    <div class="contact-methods">
+      <a href="mailto:waeterinckx@gmail.com" class="contact-card">waeterinckx@gmail.com</a>
+      <a href="#" class="contact-card">LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Duncan Waeterinckx — Administration SI Cloud & Automatisation · 100% à distance · Alpes-Maritimes, France
+</footer>
+
+<script>
+  const revealEls = document.querySelectorAll('.service-card, .pourqui-card, .process-item');
+  revealEls.forEach(el => el.classList.add('reveal'));
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.1});
+  revealEls.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
